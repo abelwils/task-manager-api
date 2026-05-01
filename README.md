@@ -23,7 +23,7 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 
 ---
 
-## ✨ Features
+##  Features
 
 ### Authentication
 
@@ -36,7 +36,7 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 * User role (default)
 * Admin role (can delete any task)
 
-### 📦 Task Management (CRUD)
+### Task Management (CRUD)
 
 * Create tasks
 * Read tasks (user-specific)
@@ -44,7 +44,7 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 * Delete tasks
 * Toggle completion
 
-### 🌐 Frontend UI
+###  Frontend UI
 
 * Register & login users
 * Dashboard with task management
