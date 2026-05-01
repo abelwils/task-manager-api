@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>TaskPro</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background: #020617;
+    padding: 20px;
+}
+
+.main {
+    margin-left: 240px;
+    padding: 40px;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-blue { background: #3b82f6; color: white; }
+.btn-green { background: #22c55e; color: white; }
+.btn-red { background: #ef4444; color: white; }
+
+.task {
+    background: #334155;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>🚀 TaskPro</h2>
+    <button onclick="logout()" class="btn-red">Logout</button>
+</div>
+
+<div class="main">
+
+<h1>Dashboard</h1>
+
+<div class="card">
+<h3>Register</h3>
+<input id="reg_email" placeholder="Email">
+<input id="reg_password" type="password" placeholder="Password">
+<button onclick="register()" class="btn-blue">Register</button>
+</div>
+
+<div class="card">
+<h3>Login</h3>
+<input id="login_email" placeholder="Email">
+<input id="login_password" type="password" placeholder="Password">
+<button onclick="login()" class="btn-green">Login</button>
+<p id="status"></p>
+</div>
+
+<div class="card">
+<h3>Create Task</h3>
+<input id="task_title" placeholder="Task title">
+<select id="priority">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+<input type="date" id="due_date">
+<button onclick="createTask()" class="btn-blue">Add Task</button>
+</div>
+
+<div class="card">
+<h3>Your Tasks</h3>
+<button onclick="loadTasks()">Refresh</button>
+<div id="tasks"></div>
+</div>
+
+</div>
+
+<script>
+let token = localStorage.getItem("token") || "";
+
+// AUTO LOGIN
+if (token) {
+    document.getElementById("status").innerText = "Logged in ✅";
+    loadTasks();
+}
+
+// REGISTER
+async function register() {
+    const res = await fetch("/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            email: reg_email.value,
+            password: reg_password.value
+        })
+    });
+
+    alert(await res.text());
+}
+
+// LOGIN
+async function login() {
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            email: login_email.value,
+            password: login_password.value
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.access_token) {
+        token = data.access_token;
+        localStorage.setItem("token", token);
+        document.getElementById("status").innerText = "Logged in ✅";
+        loadTasks();
+    } else {
+        alert("Login failed");
+    }
+}
+
+// LOGOUT
+function logout() {
+    token = "";
+    localStorage.removeItem("token");
+
+    document.getElementById("status").innerText = "Logged out ❌";
+    document.getElementById("tasks").innerHTML = "";
+
+    alert("Logged out");
+}
+
+// CREATE TASK
+async function createTask() {
+    if (!token) return alert("Login first");
+
+    const res = await fetch("/tasks", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            title: task_title.value,
+            priority: priority.value,
+            due_date: due_date.value ? new Date(due_date.value).toISOString() : null
+        })
+    });
+
+    const data = await res.json();
+    alert(data.message);
+
+    loadTasks();
+}
+
+// LOAD TASKS
+async function loadTasks() {
+    if (!token) return;
+
+    const res = await fetch("/tasks", {
+        headers: {"Authorization": "Bearer " + token}
+    });
+
+    const data = await res.json();
+
+    const container = document.getElementById("tasks");
+    container.innerHTML = "";
+
+    data.forEach(task => {
+        const div = document.createElement("div");
+        div.className = "task";
+
+        div.innerHTML = `
+            <div>
+                <b>${task.title}</b><br>
+                <span class="${task.priority}">
+                    ${task.priority.toUpperCase()}
+                </span><br>
+                ${task.due_date ? new Date(task.due_date).toDateString() : ""}
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+// DELETE
+async function deleteTask(id) {
+    await fetch("/tasks/" + id, {
+        method: "DELETE",
+        headers: {"Authorization": "Bearer " + token}
+    });
+
+    alert("Deleted");
+    loadTasks();
+}
+
+// EDIT
+async function editTask(id) {
+    const newTitle = prompt("Enter new title:");
+    if (!newTitle) return;
+
+    await fetch("/tasks/" + id, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            title: newTitle,
+            priority: "medium"
+        })
+    });
+
+    alert("Updated");
+    loadTasks();
+}
+</script>
+
+</body>
+</html>
