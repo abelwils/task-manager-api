@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# 🌐 CORS
+#  CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 📦 DB Dependency
+#  DB Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -31,13 +31,13 @@ def get_db():
         db.close()
 
 
-# 🏠 Serve Frontend
+#  Serve Frontend
 @app.get("/")
 def serve_frontend():
     return FileResponse("frontend/index.html")
 
 
-# 🔐 REGISTER
+#  REGISTER
 @app.post("/register")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     existing = db.query(models.User).filter(models.User.email == user.email).first()
@@ -58,7 +58,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return {"message": "User registered"}
 
 
-# 🔐 LOGIN
+#  LOGIN
 @app.post("/login")
 def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -106,7 +106,7 @@ def get_tasks(
     return tasks
 
 
-# ✏️ UPDATE TASK
+#  UPDATE TASK
 @app.put("/tasks/{task_id}")
 def update_task(
     task_id: int,
@@ -179,7 +179,7 @@ def delete_task(
     return {"message": "Task deleted"}
 
 
-# 👑 ADMIN DELETE
+#  ADMIN DELETE
 @app.delete("/admin/tasks/{task_id}")
 def admin_delete(
     task_id: int,
