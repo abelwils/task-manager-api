@@ -1,4 +1,4 @@
-# 🚀 TaskPro - Backend Developer Internship Assignment
+#  TaskPro - Backend Developer Internship Assignment
 
 ## 📌 Overview
 
@@ -7,7 +7,7 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 ### Backend
 
@@ -25,13 +25,13 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 
 ## ✨ Features
 
-### 🔐 Authentication
+### Authentication
 
 * User registration with password hashing
 * Secure login with JWT tokens
 * Token-based protected routes
 
-### 👥 Role-Based Access
+### Role-Based Access
 
 * User role (default)
 * Admin role (can delete any task)
@@ -53,7 +53,7 @@ It includes a secure backend with JWT authentication and a simple frontend UI to
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 * Password hashing using bcrypt
 * JWT-based authentication
@@ -81,7 +81,7 @@ backend-project/
 
 ---
 
-## ⚙️ Setup Instructions
+##  Setup Instructions
 
 ### 1️⃣ Clone the repository
 
@@ -135,7 +135,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 📬 API Endpoints
+## API Endpoints
 
 ### Auth
 
@@ -177,7 +177,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 🚀 Scalability Notes
+## Scalability Notes
 
 This project is designed with scalability in mind:
 
